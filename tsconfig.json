@@ -1,0 +1,26 @@
+// {
+//   "extends": "expo/tsconfig.base",
+//   "compilerOptions": {
+//     "types": ["expo"],
+//     "strict": true,
+//     "paths": {
+//       "@/*": ["./*"]
+//     }
+//   },
+//   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+// }
+
+
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "types": ["expo"],
+    "strict": true,
+    "jsx": "react-jsx",               // ✅ JSX 오류 해결
+    "esModuleInterop": true,         // ✅ 모듈 import 오류 해결
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}
