@@ -64,6 +64,8 @@ export default function MapBottomSheet({ stores, sheetPosition }: Props) {
     (index: number) => {
       setShowFilter(index !== 0);
 
+      if (!sheetPosition) return;
+
       if (index === 0) {
         sheetPosition.value = withTiming(0);
       } else if (index === 1) {
