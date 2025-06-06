@@ -14,6 +14,7 @@
 //   Dimensions,
 // } from 'react-native';
 // import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+// import SideMenu from '../../components/sidemenu'; // 경로는 상황에 맞게 수정
 
 // const screenWidth = Dimensions.get('window').width;
 
@@ -68,14 +69,6 @@
 //             <Ionicons name="notifications-outline" size={24} color="black" />
 //           </TouchableOpacity>
 //         </View>
-
-//         {/* 사이드 메뉴 */}
-//         <Animated.View style={[styles.sideMenu, { left: slideAnim }]}>
-//           <Text style={styles.menuItem}>마이페이지</Text>
-//           <Text style={styles.menuItem}>주문 내역</Text>
-//           <Text style={styles.menuItem}>환경 기여 내역</Text>
-//           <Text style={styles.menuItem}>설정</Text>
-//         </Animated.View>
 
 //         {/* 검색창 */}
 //         <View style={styles.searchBox}>
@@ -166,6 +159,9 @@
 //           </View>
 //         </ScrollView>
 //       </ScrollView>
+
+//       {/* 슬라이드 메뉴 추가 */}
+//       <SideMenu slideAnim={slideAnim} />
 //     </SafeAreaView>
 //   );
 // }
@@ -274,22 +270,9 @@
 //     marginTop: 8,
 //     marginBottom: 12,
 //   },
-//   sideMenu: {
-//     position: 'absolute',
-//     top: 0,
-//     bottom: 0,
-//     width: screenWidth * 0.7,
-//     backgroundColor: '#fff',
-//     padding: 24,
-//     zIndex: 10,
-//   },
-//   menuItem: {
-//     fontSize: 18,
-//     marginBottom: 20,
-//   },
 // });
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -298,6 +281,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   StatusBar,
   SafeAreaView,
   Platform,
@@ -305,19 +289,29 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import SideMenu from '../../components/sidemenu'; // 경로는 상황에 맞게 수정
+import SideMenu from '../../components/sidemenu';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function Home() {
-  const slideAnim = useRef(new Animated.Value(-screenWidth * 0.7)).current;
+  const slideAnim = useRef(new Animated.Value(-screenWidth * 0.75)).current;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleMenuPress = () => {
+  const openMenu = () => {
+    setIsMenuOpen(true);
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 300,
       useNativeDriver: false,
     }).start();
+  };
+
+  const closeMenu = () => {
+    Animated.timing(slideAnim, {
+      toValue: -screenWidth * 0.75,
+      duration: 300,
+      useNativeDriver: false,
+    }).start(() => setIsMenuOpen(false));
   };
 
   const handleLocationPress = () => {
@@ -333,12 +327,12 @@ export default function Home() {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
+        scrollEnabled={!isMenuOpen}
       >
         <StatusBar barStyle="dark-content" />
 
-        {/* 위치 & 알림 */}
         <View style={styles.topBar}>
-          <TouchableOpacity onPress={handleMenuPress}>
+          <TouchableOpacity onPress={openMenu}>
             <MaterialIcons name="menu" size={24} color="black" />
           </TouchableOpacity>
 
@@ -361,7 +355,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* 검색창 */}
         <View style={styles.searchBox}>
           <TextInput
             placeholder="오늘의 임박 상품을 찾아보세요 !"
@@ -370,13 +363,11 @@ export default function Home() {
           />
         </View>
 
-        {/* 배너 이미지 */}
         <Image
           source={require('../../assets/food/banner-bag.png')}
           style={styles.bannerImageFull}
         />
 
-        {/* 카테고리 버튼 */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -388,7 +379,6 @@ export default function Home() {
           <CategoryButton label="커피/음료" />
         </ScrollView>
 
-        {/* 추천 음식 카드 */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -421,7 +411,6 @@ export default function Home() {
           </View>
         </ScrollView>
 
-        {/* 인기 맛집 */}
         <Text style={styles.subTitle}>‘수원대학교’ 근처 인기 맛집✨</Text>
 
         <ScrollView
@@ -451,7 +440,12 @@ export default function Home() {
         </ScrollView>
       </ScrollView>
 
-      {/* 슬라이드 메뉴 추가 */}
+      {isMenuOpen && (
+        <TouchableWithoutFeedback onPress={closeMenu}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+      )}
+
       <SideMenu slideAnim={slideAnim} />
     </SafeAreaView>
   );
@@ -560,5 +554,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 8,
     marginBottom: 12,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: screenWidth,
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    zIndex: 5,
   },
 });
