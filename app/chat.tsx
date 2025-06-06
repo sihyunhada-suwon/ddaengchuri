@@ -1,4 +1,4 @@
-// import React from 'react';
+// import React, { useState } from 'react';
 // import {
 //   View,
 //   Text,
@@ -6,17 +6,20 @@
 //   Image,
 //   TextInput,
 //   TouchableOpacity,
-//   FlatList,
-//   SafeAreaView,
 //   ScrollView,
+//   SafeAreaView,
 // } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons';
+// import { Stack, router } from 'expo-router';
+// import IntroPopup from '../components/Introchatpopup'; // ✅ 추가
 
 // const ChatScreen = () => {
+//   const [showIntro, setShowIntro] = useState(true); // ✅ 팝업 상태
+
 //   const messages = [
 //     {
 //       type: 'bot',
-//       avatar: require('../../assets/ai/bot.png'),
+//       avatar: require('../assets/ai/bot.png'),
 //       text: '안녕하세요! 챗봇 잇또예요 ✨\n궁금한 건 저한테 물어보시거나\n왼쪽 아래에서 카테고리에서 찾아 보세요!',
 //     },
 //     {
@@ -36,48 +39,61 @@
 
 //   return (
 //     <SafeAreaView style={styles.container}>
-//       {/* Header */}
-//       <View style={styles.header}>
-//         <Ionicons name="chevron-back" size={28} color="#115E4B" />
-//         <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
-//       </View>
+//       <Stack.Screen options={{ headerShown: false }} />
 
-//       {/* Chat Content */}
-//       <ScrollView style={styles.chatBox}>
-//         {messages.map((msg, idx) => (
-//           <View key={idx} style={styles.messageRow}>
-//             {msg.avatar && <Image source={msg.avatar} style={styles.avatar} />}
-//             <View style={styles.bubble}>
-//               <Text style={styles.bubbleText}>{msg.text}</Text>
-//             </View>
-//           </View>
-//         ))}
-
-//         {/* Category Buttons */}
-//         <View style={styles.categoryContainer}>
-//           {categories.map((label, index) => (
-//             <TouchableOpacity key={index} style={styles.categoryButton}>
-//               <Text style={styles.categoryText}>{label}</Text>
+//       {/* ✅ 팝업 닫힌 후에만 보이게 */}
+//       {!showIntro && (
+//         <>
+//           {/* Header */}
+//           <View style={styles.header}>
+//             <TouchableOpacity onPress={() => router.back()}>
+//               <Ionicons name="chevron-back" size={28} color="#115E4B" />
 //             </TouchableOpacity>
-//           ))}
-//         </View>
-//       </ScrollView>
+//             <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
+//           </View>
 
-//       {/* Input Field */}
-//       <View style={styles.inputContainer}>
-//         <Ionicons name="menu" size={24} color="#115E4B" />
-//         <TextInput
-//           style={styles.input}
-//           placeholder="메시지를 입력해주세요."
-//           placeholderTextColor="#aaa"
-//         />
-//         <TouchableOpacity>
-//           <Image
-//             source={require('../../assets/ai/send.png')}
-//             style={styles.sendIcon}
-//           />
-//         </TouchableOpacity>
-//       </View>
+//           {/* Chat Content */}
+//           <ScrollView style={styles.chatBox}>
+//             {messages.map((msg, idx) => (
+//               <View key={idx} style={styles.messageRow}>
+//                 {msg.avatar && (
+//                   <Image source={msg.avatar} style={styles.avatar} />
+//                 )}
+//                 <View style={styles.bubble}>
+//                   <Text style={styles.bubbleText}>{msg.text}</Text>
+//                 </View>
+//               </View>
+//             ))}
+
+//             {/* Category Buttons */}
+//             <View style={styles.categoryContainer}>
+//               {categories.map((label, index) => (
+//                 <TouchableOpacity key={index} style={styles.categoryButton}>
+//                   <Text style={styles.categoryText}>{label}</Text>
+//                 </TouchableOpacity>
+//               ))}
+//             </View>
+//           </ScrollView>
+
+//           {/* Input Field */}
+//           <View style={styles.inputContainer}>
+//             <Ionicons name="menu" size={24} color="#115E4B" />
+//             <TextInput
+//               style={styles.input}
+//               placeholder="메시지를 입력해주세요."
+//               placeholderTextColor="#aaa"
+//             />
+//             <TouchableOpacity>
+//               <Image
+//                 source={require('../assets/ai/send.png')}
+//                 style={styles.sendIcon}
+//               />
+//             </TouchableOpacity>
+//           </View>
+//         </>
+//       )}
+//       {/* ✅ 팝업은 항상 맨 아래에 배치되어 화면 최상단에 오도록 */}
+//       {showIntro && <IntroPopup onClose={() => setShowIntro(false)} />}
 //     </SafeAreaView>
 //   );
 // };
@@ -170,7 +186,7 @@
 
 // export default ChatScreen;
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -182,9 +198,12 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, router } from 'expo-router'; // ✅ expo-router용 import
+import { Stack, router } from 'expo-router';
+import IntroPopup from '../components/Introchatpopup'; // ✅ 팝업 컴포넌트
 
 const ChatScreen = () => {
+  const [showIntro, setShowIntro] = useState(true); // ✅ 팝업 상태
+
   const messages = [
     {
       type: 'bot',
@@ -208,53 +227,60 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* ✅ 헤더 숨기기 */}
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#115E4B" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
-      </View>
-
-      {/* Chat Content */}
-      <ScrollView style={styles.chatBox}>
-        {messages.map((msg, idx) => (
-          <View key={idx} style={styles.messageRow}>
-            {msg.avatar && <Image source={msg.avatar} style={styles.avatar} />}
-            <View style={styles.bubble}>
-              <Text style={styles.bubbleText}>{msg.text}</Text>
-            </View>
-          </View>
-        ))}
-
-        {/* Category Buttons */}
-        <View style={styles.categoryContainer}>
-          {categories.map((label, index) => (
-            <TouchableOpacity key={index} style={styles.categoryButton}>
-              <Text style={styles.categoryText}>{label}</Text>
-            </TouchableOpacity>
-          ))}
+      {/* ✅ 항상 보이는 채팅 UI */}
+      <>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={28} color="#115E4B" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
         </View>
-      </ScrollView>
 
-      {/* Input Field */}
-      <View style={styles.inputContainer}>
-        <Ionicons name="menu" size={24} color="#115E4B" />
-        <TextInput
-          style={styles.input}
-          placeholder="메시지를 입력해주세요."
-          placeholderTextColor="#aaa"
-        />
-        <TouchableOpacity>
-          <Image
-            source={require('../assets/ai/send.png')}
-            style={styles.sendIcon}
+        {/* Chat Content */}
+        <ScrollView style={styles.chatBox}>
+          {messages.map((msg, idx) => (
+            <View key={idx} style={styles.messageRow}>
+              {msg.avatar && (
+                <Image source={msg.avatar} style={styles.avatar} />
+              )}
+              <View style={styles.bubble}>
+                <Text style={styles.bubbleText}>{msg.text}</Text>
+              </View>
+            </View>
+          ))}
+
+          {/* Category Buttons */}
+          <View style={styles.categoryContainer}>
+            {categories.map((label, index) => (
+              <TouchableOpacity key={index} style={styles.categoryButton}>
+                <Text style={styles.categoryText}>{label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Input Field */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="menu" size={24} color="#115E4B" />
+          <TextInput
+            style={styles.input}
+            placeholder="메시지를 입력해주세요."
+            placeholderTextColor="#aaa"
           />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity>
+            <Image
+              source={require('../assets/ai/send.png')}
+              style={styles.sendIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      </>
+
+      {/* ✅ 팝업은 그 위에만 잠깐 덮이게 */}
+      {showIntro && <IntroPopup onClose={() => setShowIntro(false)} />}
     </SafeAreaView>
   );
 };

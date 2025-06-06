@@ -24,7 +24,6 @@ const AiScreen = () => {
 
   const handleStart = () => {
     setShowPopup(false);
-    router.push('/chat'); // chat.tsx로 이동
   };
 
   return (
@@ -90,8 +89,7 @@ const AiScreen = () => {
       <TouchableOpacity
         style={styles.chatbotButton}
         onPress={() => {
-          // 챗봇 버튼 클릭 시 팝업은 다시 띄우지 않음
-          console.log('AI 챗봇 버튼 클릭'); // 나중에 실제 기능 연결
+          router.push('/chat'); // ✅ 항상 이동
         }}
       >
         <View style={styles.chatbotLabel}>
