@@ -10,7 +10,7 @@ import {
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import type { ComponentRef } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import BottomSheet from './map_bottomsheet';
+import BottomSheet from '../../components/map_bottomsheet';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

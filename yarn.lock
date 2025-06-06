@@ -2401,7 +2401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^19.1.6":
+"@types/react@npm:*":
   version: 19.1.6
   resolution: "@types/react@npm:19.1.6"
   dependencies:
@@ -2417,6 +2417,15 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/49331800b76572eb2992a5c44801dbf8c612a5f99c8f4e4200f06c7de6f3a6e9455c661784a6c5469df96fa45622cb4a9d0982c44e6a0d5719be5f2ef1f545ed
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:~19.0.10":
+  version: 19.0.14
+  resolution: "@types/react@npm:19.0.14"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/e5d9ac42fc6d66c21b7020c8ae1a8190c486e63e5daf2f67b67694dd39c6264cc92a57f90b84525bf73774b90f91bd3b1d907022bcc9b36d6d4ffbcf001f8feb
   languageName: node
   linkType: hard
 
@@ -5228,9 +5237,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-expo@npm:~53.0.5":
-  version: 53.0.6
-  resolution: "jest-expo@npm:53.0.6"
+"jest-expo@npm:~53.0.7":
+  version: 53.0.7
+  resolution: "jest-expo@npm:53.0.7"
   dependencies:
     "@expo/config": "npm:~11.0.10"
     "@expo/json-file": "npm:^9.1.4"
@@ -5253,7 +5262,7 @@ __metadata:
     react-native: "*"
   bin:
     jest: bin/jest.js
-  checksum: 10c0/e54daaafa195ced302a2a677ffb376e95bd41d9e9283dbb1cacacaf5d9592ed3d583eb09144f78b3a1e22d78e6599277a0ec6d61b164bd5c55a669c7faae29fd
+  checksum: 10c0/a8bc45840970565d75a9a54cad4fbf9c822ed569e50e40b0c5b463c0a06670337b9d279acc8bae02d3429b67adc386ea9eb0a25056d198c09c0ac3f210a3a29b
   languageName: node
   linkType: hard
 
@@ -7778,7 +7787,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.9"
     "@react-navigation/native-stack": "npm:^7.3.13"
     "@types/jest": "npm:^29.5.12"
-    "@types/react": "npm:^19.1.6"
+    "@types/react": "npm:~19.0.10"
     "@types/react-dom": "npm:^19.1.6"
     "@types/react-native": "npm:^0.73.0"
     "@types/react-native-vector-icons": "npm:^6.4.18"
@@ -7794,7 +7803,7 @@ __metadata:
     expo-system-ui: "npm:~5.0.7"
     expo-web-browser: "npm:~14.1.6"
     jest: "npm:~29.7.0"
-    jest-expo: "npm:~53.0.5"
+    jest-expo: "npm:~53.0.7"
     metro: "npm:^0.82.3"
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"

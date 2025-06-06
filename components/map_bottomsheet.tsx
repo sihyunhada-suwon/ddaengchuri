@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Store } from './map';
+import { Store } from '../app/(tabs)/map';
 import Icon from 'react-native-vector-icons/Feather';
 import { SharedValue, withTiming } from 'react-native-reanimated';
 
