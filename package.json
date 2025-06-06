@@ -19,7 +19,7 @@
     "@gorhom/bottom-sheet": "^5.1.4",
     "@react-navigation/native": "^7.1.9",
     "@react-navigation/native-stack": "^7.3.13",
-    "expo": "^53.0.0",
+    "expo": "^53.0.10",
     "expo-constants": "~17.1.6",
     "expo-font": "~13.3.1",
     "expo-linking": "~7.1.5",
@@ -32,7 +32,7 @@
     "metro": "^0.82.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-native": "0.79.3",
+    "react-native": "^0.79.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-maps": "1.20.1",
     "react-native-paper": "^5.14.4",
@@ -45,7 +45,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/jest": "^29.5.12",
-    "@types/react": "~19.0.10",
+    "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
     "@types/react-native": "^0.73.0",
     "@types/react-native-vector-icons": "^6.4.18",
@@ -56,5 +56,5 @@
     "typescript": "~5.8.3"
   },
   "private": true,
-  "packageManager": "yarn@4.2.2+sha256.1aa43a5304405be7a7cb9cb5de7b97de9c4e8ddd3273e4dad00d6ae3eb39f0ef"
+  "packageManager": "yarn@4.9.2"
 }
