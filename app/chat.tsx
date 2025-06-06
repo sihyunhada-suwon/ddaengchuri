@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
@@ -15,8 +19,8 @@ import IntroPopup from '../components/Introchatpopup';
 
 const ChatScreen = () => {
   const [showIntro, setShowIntro] = useState(true);
-
-  const messages = [
+  const [inputText, setInputText] = useState('');
+  const [messages, setMessages] = useState([
     {
       type: 'bot',
       avatar: require('../assets/ai/bot.png'),
@@ -37,78 +41,118 @@ const ChatScreen = () => {
         '💬 도움이 필요해요',
       ],
     },
-  ];
+  ]);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+    const newMessage = {
+      type: 'user',
+      text: inputText,
+    };
+    setMessages((prev) => [...prev, newMessage]);
+    setInputText('');
+  };
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={28} color="#115E4B" />
-          </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="chevron-back" size={28} color="#115E4B" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
+          </View>
 
-          <Text style={styles.headerTitle}>세이브잇 챗봇</Text>
-        </View>
+          {/* Chat Content */}
+          <ScrollView
+            style={styles.chatBox}
+            ref={scrollViewRef}
+            keyboardShouldPersistTaps="handled"
+          >
+            {messages.map((msg, idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.messageRow,
+                  msg.type === 'user' && { justifyContent: 'flex-end' },
+                ]}
+              >
+                {msg.type === 'bot' && msg.avatar ? (
+                  <Image source={msg.avatar} style={styles.avatar} />
+                ) : msg.type === 'bot' || msg.type === 'category-list' ? (
+                  <View style={styles.avatarPlaceholder} />
+                ) : null}
 
-        {/* Chat Content */}
-        <ScrollView style={styles.chatBox}>
-          {messages.map((msg, idx) => (
-            <View key={idx} style={styles.messageRow}>
-              {/* 아바타 or placeholder */}
-              {msg.avatar ? (
-                <Image source={msg.avatar} style={styles.avatar} />
-              ) : (
-                <View style={styles.avatarPlaceholder} />
-              )}
+                {msg.type === 'bot' || msg.type === 'user' ? (
+                  <View
+                    style={[
+                      styles.bubble,
+                      msg.type === 'user' && {
+                        backgroundColor: '#DCF8C6',
+                        borderTopRightRadius: 2,
+                        borderTopLeftRadius: 18,
+                        borderBottomRightRadius: 18,
+                        borderBottomLeftRadius: 18,
+                        alignSelf: 'flex-end',
+                      },
+                    ]}
+                  >
+                    <Text style={styles.bubbleText}>{msg.text}</Text>
+                  </View>
+                ) : msg.type === 'category-list' && msg.categories ? (
+                  <View style={styles.bubble}>
+                    {msg.categories.map((label, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[
+                          styles.categoryItem,
+                          index === msg.categories.length - 1 && {
+                            borderBottomWidth: 0,
+                          },
+                        ]}
+                        onPress={() => console.log(`${label} 클릭됨`)}
+                      >
+                        <Text style={styles.categoryText}>{label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ) : null}
+              </View>
+            ))}
+          </ScrollView>
 
-              {/* 내용: 봇 메시지 or 카테고리 리스트 */}
-              {msg.type === 'bot' ? (
-                <View style={styles.bubble}>
-                  <Text style={styles.bubbleText}>{msg.text}</Text>
-                </View>
-              ) : msg.type === 'category-list' && msg.categories ? (
-                <View style={styles.bubble}>
-                  {msg.categories.map((label, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.categoryItem,
-                        index === msg.categories.length - 1 && {
-                          borderBottomWidth: 0,
-                        },
-                      ]}
-                      onPress={() => console.log(`${label} 클릭됨`)}
-                    >
-                      <Text style={styles.categoryText}>{label}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ) : null}
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Input Field */}
-        <View style={styles.inputContainer}>
-          <Ionicons name="menu" size={24} color="#115E4B" />
-          <TextInput
-            style={styles.input}
-            placeholder="메시지를 입력해주세요."
-            placeholderTextColor="#aaa"
-          />
-          <TouchableOpacity>
-            <Image
-              source={require('../assets/ai/send.png')}
-              style={styles.sendIcon}
+          {/* Input Field */}
+          <View style={styles.inputContainer}>
+            <Ionicons name="menu" size={24} color="#115E4B" />
+            <TextInput
+              style={styles.input}
+              placeholder="메시지를 입력해주세요."
+              placeholderTextColor="#aaa"
+              value={inputText}
+              onChangeText={setInputText}
+              multiline
             />
-          </TouchableOpacity>
-        </View>
-      </>
+            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+              <Ionicons name="paper-plane-outline" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
 
-      {/* Intro Popup */}
       {showIntro && <IntroPopup onClose={() => setShowIntro(false)} />}
     </SafeAreaView>
   );
@@ -156,17 +200,13 @@ const styles = StyleSheet.create({
   },
   bubble: {
     backgroundColor: '#fff',
-    borderRadius: 15,
     padding: 12,
     maxWidth: '80%',
-
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 3,
-
-    // ✅ 개별 모서리 radius 적용
     borderTopLeftRadius: 2,
     borderTopRightRadius: 18,
     borderBottomRightRadius: 18,
@@ -182,6 +222,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
     alignItems: 'center',
+    width: '100%',
   },
   categoryText: {
     fontSize: 15,
@@ -193,18 +234,26 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#eee',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     backgroundColor: '#fff',
   },
   input: {
     flex: 1,
     marginHorizontal: 12,
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
+    paddingVertical: 6,
+    minHeight: 30,
+    maxHeight: 100,
   },
-  sendIcon: {
-    width: 32,
-    height: 32,
+  sendButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#115E4B',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 6,
   },
 });
 
