@@ -1,4 +1,5 @@
-// import React from 'react';
+// import React, { useState } from 'react';
+// import { useNavigation } from 'expo-router'; // 또는 react-navigation/native
 // import AiPopup from '../../components/AiPopup';
 // import {
 //   View,
@@ -7,9 +8,21 @@
 //   ScrollView,
 //   StyleSheet,
 //   TouchableOpacity,
+//   Modal,
 // } from 'react-native';
 
 // const AiScreen = () => {
+//   const [showPopup, setShowPopup] = useState(true);
+//   const navigation = useNavigation();
+
+//   // 👉 "지금 바로 시작하기" 눌렀을 때
+//   const handleStart = () => {
+//     setShowPopup(false); // 팝업 닫고
+//     // setTimeout(() => {
+//     //   navigation.navigate('AiDetail'); // 페이지 이동 (AiDetail은 예시, 원하는 페이지로 변경)
+//     // }, 300); // 모달 애니메이션 여유
+//   };
+
 //   return (
 //     <View style={styles.wrapper}>
 //       <ScrollView
@@ -26,7 +39,7 @@
 
 //         <View style={styles.separator} />
 
-//         {/* 섹션 1 */}
+//         {/* 섹션들 */}
 //         <Section title="📍 지금 위치 기준으로 가까운 가게를 보여드려요">
 //           <Card
 //             image={require('../../assets/food/salad.jpg')}
@@ -42,7 +55,6 @@
 //           />
 //         </Section>
 
-//         {/* 섹션 2 */}
 //         <Section title="🛒 최근에 자주 주문하신 메뉴를 참고했어요">
 //           <Card
 //             image={require('../../assets/food/cozy.jpg')}
@@ -58,7 +70,6 @@
 //           />
 //         </Section>
 
-//         {/* 섹션 3 */}
 //         <Section title="🕒 이 시간대 인기 많은 가게를 추천 드려요 !">
 //           <Card
 //             image={require('../../assets/food/pizza.jpg')}
@@ -71,24 +82,31 @@
 //         </Section>
 //       </ScrollView>
 
-//       {/* ✅ AI 챗봇 버튼 */}
+//       {/* 챗봇 버튼 */}
 //       <TouchableOpacity
 //         style={styles.chatbotButton}
-//         onPress={() => console.log('AI 챗봇 클릭')}
+//         onPress={() => setShowPopup(true)}
 //       >
 //         <View style={styles.chatbotLabel}>
 //           <Text style={styles.chatbotLabelText}>AI 챗봇</Text>
 //         </View>
 //         <Image
-//           source={require('../../assets/bot.png')}
+//           source={require('../../assets/ai/bot.png')}
 //           style={styles.chatbotImage}
 //         />
 //       </TouchableOpacity>
+
+//       {/* 팝업 */}
+//       <AiPopup
+//         visible={showPopup}
+//         onClose={() => setShowPopup(false)}
+//         onStart={handleStart}
+//       />
 //     </View>
 //   );
 // };
 
-// // 섹션 컴포넌트
+// // Section 컴포넌트
 // const Section = ({ title, children }: any) => (
 //   <View style={styles.section}>
 //     <Text style={styles.sectionTitle}>{title}</Text>
@@ -98,7 +116,7 @@
 //   </View>
 // );
 
-// // 카드 컴포넌트
+// // Card 컴포넌트
 // const Card = ({ image, name, rating, distance }: any) => (
 //   <TouchableOpacity style={styles.card}>
 //     <Image source={image} style={styles.cardImage} resizeMode="cover" />
@@ -114,36 +132,13 @@
 // );
 
 // const styles = StyleSheet.create({
-//   wrapper: {
-//     flex: 1,
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   scrollContent: {
-//     paddingTop: 60,
-//     paddingBottom: 120, // 하단 여백 확보
-//   },
-//   header: {
-//     paddingHorizontal: 20,
-//     paddingTop: 20,
-//     marginBottom: 10,
-//   },
-//   title: {
-//     fontSize: 23,
-//     lineHeight: 30,
-//     fontWeight: '500',
-//     color: '#222',
-//   },
-//   highlight: {
-//     fontWeight: 'bold',
-//     fontSize: 20,
-//     color: '#222',
-//   },
-//   section: {
-//     marginBottom: 30,
-//   },
+//   wrapper: { flex: 1 },
+//   container: { flex: 1, backgroundColor: '#fff' },
+//   scrollContent: { paddingTop: 60, paddingBottom: 120 },
+//   header: { paddingHorizontal: 20, paddingTop: 20, marginBottom: 10 },
+//   title: { fontSize: 23, lineHeight: 30, fontWeight: '500', color: '#222' },
+//   highlight: { fontWeight: 'bold', fontSize: 20, color: '#222' },
+//   section: { marginBottom: 30 },
 //   sectionTitle: {
 //     fontSize: 18,
 //     fontWeight: '600',
@@ -151,9 +146,7 @@
 //     marginBottom: 10,
 //     color: '#333',
 //   },
-//   separator: {
-//     height: 20,
-//   },
+//   separator: { height: 20 },
 //   card: {
 //     backgroundColor: '#fff',
 //     width: 190,
@@ -171,20 +164,9 @@
 //     borderTopLeftRadius: 12,
 //     borderTopRightRadius: 12,
 //   },
-//   cardTextContainer: {
-//     padding: 10,
-//   },
-//   cardTitle: {
-//     fontSize: 16,
-//     fontWeight: '600',
-//     marginBottom: 4,
-//   },
-//   cardSubtitle: {
-//     fontSize: 14,
-//     color: '#777',
-//   },
-
-//   // ✅ 챗봇 버튼
+//   cardTextContainer: { padding: 10 },
+//   cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
+//   cardSubtitle: { fontSize: 14, color: '#777' },
 //   chatbotButton: {
 //     position: 'absolute',
 //     bottom: 30,
@@ -229,7 +211,8 @@
 
 // export default AiScreen;
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from 'expo-router';
 import AiPopup from '../../components/AiPopup';
 import {
   View,
@@ -238,11 +221,27 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Modal,
 } from 'react-native';
 
 const AiScreen = () => {
-  const [showPopup, setShowPopup] = useState(false); // ✅ 팝업 상태
+  const [showPopup, setShowPopup] = useState(false);
+  const [hasShownOnce, setHasShownOnce] = useState(false);
+  const navigation = useNavigation();
+
+  // 컴포넌트 처음 마운트될 때 팝업 1회 표시
+  useEffect(() => {
+    if (!hasShownOnce) {
+      setShowPopup(true);
+      setHasShownOnce(true);
+    }
+  }, []);
+
+  const handleStart = () => {
+    setShowPopup(false);
+    // setTimeout(() => {
+    //   navigation.navigate('AiDetail'); // 나중에 페이지 만들면 연결
+    // }, 300);
+  };
 
   return (
     <View style={styles.wrapper}>
@@ -260,7 +259,7 @@ const AiScreen = () => {
 
         <View style={styles.separator} />
 
-        {/* 섹션 1 */}
+        {/* 섹션들 */}
         <Section title="📍 지금 위치 기준으로 가까운 가게를 보여드려요">
           <Card
             image={require('../../assets/food/salad.jpg')}
@@ -276,7 +275,6 @@ const AiScreen = () => {
           />
         </Section>
 
-        {/* 섹션 2 */}
         <Section title="🛒 최근에 자주 주문하신 메뉴를 참고했어요">
           <Card
             image={require('../../assets/food/cozy.jpg')}
@@ -292,7 +290,6 @@ const AiScreen = () => {
           />
         </Section>
 
-        {/* 섹션 3 */}
         <Section title="🕒 이 시간대 인기 많은 가게를 추천 드려요 !">
           <Card
             image={require('../../assets/food/pizza.jpg')}
@@ -305,10 +302,13 @@ const AiScreen = () => {
         </Section>
       </ScrollView>
 
-      {/* ✅ AI 챗봇 버튼 */}
+      {/* 챗봇 버튼 */}
       <TouchableOpacity
         style={styles.chatbotButton}
-        onPress={() => setShowPopup(true)} // 버튼 누르면 팝업 보여줌
+        onPress={() => {
+          // 챗봇 버튼 클릭 시 팝업은 다시 띄우지 않음
+          console.log('AI 챗봇 버튼 클릭'); // 나중에 실제 기능 연결
+        }}
       >
         <View style={styles.chatbotLabel}>
           <Text style={styles.chatbotLabelText}>AI 챗봇</Text>
@@ -319,20 +319,17 @@ const AiScreen = () => {
         />
       </TouchableOpacity>
 
-      {/* ✅ AI 팝업 모달 */}
-      <Modal
+      {/* 팝업은 진입 시 1번만 노출 */}
+      <AiPopup
         visible={showPopup}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowPopup(false)}
-      >
-        <AiPopup visible={showPopup} onClose={() => setShowPopup(false)} />
-      </Modal>
+        onClose={() => setShowPopup(false)}
+        onStart={handleStart}
+      />
     </View>
   );
 };
 
-// 섹션 컴포넌트
+// Section 컴포넌트
 const Section = ({ title, children }: any) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
@@ -342,7 +339,7 @@ const Section = ({ title, children }: any) => (
   </View>
 );
 
-// 카드 컴포넌트
+// Card 컴포넌트
 const Card = ({ image, name, rating, distance }: any) => (
   <TouchableOpacity style={styles.card}>
     <Image source={image} style={styles.cardImage} resizeMode="cover" />
@@ -358,36 +355,13 @@ const Card = ({ image, name, rating, distance }: any) => (
 );
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContent: {
-    paddingTop: 60,
-    paddingBottom: 120,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 23,
-    lineHeight: 30,
-    fontWeight: '500',
-    color: '#222',
-  },
-  highlight: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#222',
-  },
-  section: {
-    marginBottom: 30,
-  },
+  wrapper: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#fff' },
+  scrollContent: { paddingTop: 60, paddingBottom: 120 },
+  header: { paddingHorizontal: 20, paddingTop: 20, marginBottom: 10 },
+  title: { fontSize: 23, lineHeight: 30, fontWeight: '500', color: '#222' },
+  highlight: { fontWeight: 'bold', fontSize: 20, color: '#222' },
+  section: { marginBottom: 30 },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -395,9 +369,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#333',
   },
-  separator: {
-    height: 20,
-  },
+  separator: { height: 20 },
   card: {
     backgroundColor: '#fff',
     width: 190,
@@ -415,18 +387,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
-  cardTextContainer: {
-    padding: 10,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#777',
-  },
+  cardTextContainer: { padding: 10 },
+  cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  cardSubtitle: { fontSize: 14, color: '#777' },
   chatbotButton: {
     position: 'absolute',
     bottom: 30,
