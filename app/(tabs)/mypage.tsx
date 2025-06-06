@@ -122,9 +122,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileImageWrapper: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 90,
+    height: 90,
+    borderRadius: 50,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
