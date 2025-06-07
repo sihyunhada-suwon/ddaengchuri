@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  FlatList,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import type { ComponentRef } from 'react';
@@ -63,11 +64,56 @@ export default function MapScreen() {
   const [onlyDiscounted, setOnlyDiscounted] = useState<boolean | null>(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [distance, setDistance] = useState('전체');
+  const [predictions, setPredictions] = useState<any[]>([]);
+
+  const fetchPredictions = async (input: string) => {
+    if (!input.trim()) {
+      setPredictions([]);
+      return;
+    }
+    try {
+      const apiKey = GOOGLE_API_KEY;
+      const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+        input
+      )}&language=ko&key=${apiKey}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.predictions) {
+        setPredictions(json.predictions);
+      } else {
+        setPredictions([]);
+      }
+    } catch (e) {
+      setPredictions([]);
+    }
+  };
+
+  const onSelectPrediction = async (prediction: any) => {
+    setSearch(prediction.description);
+    setPredictions([]);
+    const apiKey = GOOGLE_API_KEY;
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${prediction.place_id}&key=${apiKey}`;
+    try {
+      const res = await fetch(detailsUrl);
+      const json = await res.json();
+      const location = json.result.geometry.location;
+      const newRegion: Region = {
+        latitude: location.lat,
+        longitude: location.lng,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+      setRegion(newRegion);
+      mapRef.current?.animateToRegion(newRegion, 500);
+      setLocationText(prediction.description);
+    } catch (e) {
+      alert('장소 정보를 불러올 수 없습니다.');
+    }
+  };
 
   const goToCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') return;
-
     const location = await Location.getCurrentPositionAsync({});
     const newRegion: Region = {
       latitude: location.coords.latitude,
@@ -77,7 +123,6 @@ export default function MapScreen() {
     };
     setRegion(newRegion);
     mapRef.current?.animateToRegion(newRegion, 500);
-
     try {
       const [address] = await Location.reverseGeocodeAsync(location.coords);
       const formatted = `${address.region ?? ''} ${address.city ?? ''} ${
@@ -91,35 +136,21 @@ export default function MapScreen() {
   };
 
   const searchPlace = async () => {
-    // ✅ [1] 검색어 로그
-    console.log('검색어:', search);
-
     if (!search.trim()) return;
-
-    // ✅ [2] API 키 로그
-    console.log('API 키:', GOOGLE_API_KEY);
-
     const apiKey = GOOGLE_API_KEY;
     const encoded = encodeURIComponent(search.trim());
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`;
-
     try {
       const res = await fetch(url);
       const json = await res.json();
-
-      // ✅ [3] API 응답 로그
-      console.log('API 응답:', json);
-
       if (json.results && json.results.length > 0) {
         const { lat, lng } = json.results[0].geometry.location;
-
         const newRegion: Region = {
           latitude: lat,
           longitude: lng,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
-
         setRegion(newRegion);
         mapRef.current?.animateToRegion(newRegion, 500);
         setLocationText(json.results[0].formatted_address);
@@ -127,7 +158,6 @@ export default function MapScreen() {
         alert('검색 결과를 찾을 수 없습니다.');
       }
     } catch (error) {
-      console.error('Geocoding API 오류:', error);
       alert('장소 검색 중 오류가 발생했습니다.');
     }
   };
@@ -161,32 +191,64 @@ export default function MapScreen() {
       </MapView>
 
       <View style={styles.searchBox}>
-        <View style={styles.searchInputWrapper}>
-          <Icon
-            name="magnify"
-            size={22}
-            color="#999"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            placeholder="장소를 입력하세요!"
-            value={search}
-            onChangeText={setSearch}
-            style={styles.searchInput}
-            placeholderTextColor="#999"
-          />
+        {/* 입력창+검색버튼을 한 줄에 배치 */}
+        <View style={styles.rowWrap}>
+          <View style={styles.searchInputWrapper}>
+            <Icon
+              name="magnify"
+              size={22}
+              color="#999"
+              style={styles.searchIcon}
+            />
+            <TextInput
+              placeholder="장소를 입력하세요!"
+              value={search}
+              onChangeText={(txt) => {
+                setSearch(txt);
+                fetchPredictions(txt);
+              }}
+              style={styles.searchInput}
+              placeholderTextColor="#999"
+            />
+          </View>
+          <TouchableOpacity style={styles.searchButton} onPress={searchPlace}>
+            <Icon name="arrow-right" color="#fff" size={20} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.searchButton} onPress={searchPlace}>
-          <Icon name="arrow-right" color="#fff" size={20} />
+
+        {/* 자동완성 리스트 */}
+        {predictions.length > 0 && (
+          <View style={styles.suggestionsWrapper}>
+            <FlatList
+              data={predictions}
+              keyExtractor={(item) => item.place_id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{
+                    padding: 13,
+                    borderBottomWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                  onPress={() => onSelectPrediction(item)}
+                >
+                  <Text style={{ fontSize: 15, color: '#333' }}>
+                    {item.description}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              keyboardShouldPersistTaps="handled"
+            />
+          </View>
+        )}
+
+        {/* 현재 위치 버튼 */}
+        <TouchableOpacity
+          style={styles.fixedLocationButtonInBox}
+          onPress={goToCurrentLocation}
+        >
+          <Icon name="crosshairs-gps" size={22} color="#115E4B" />
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        style={styles.fixedLocationButton}
-        onPress={goToCurrentLocation}
-      >
-        <Icon name="crosshairs-gps" size={22} color="#115E4B" />
-      </TouchableOpacity>
 
       <BottomSheet
         stores={stores}
@@ -212,9 +274,11 @@ const styles = StyleSheet.create({
     top: 57,
     left: 16,
     right: 16,
+    zIndex: 20,
+  },
+  rowWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    zIndex: 20,
   },
   searchInputWrapper: {
     flex: 1,
@@ -247,10 +311,25 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
-  fixedLocationButton: {
+  suggestionsWrapper: {
     position: 'absolute',
-    top: 110,
-    left: 20,
+    top: 48,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderRadius: 11,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 99,
+    zIndex: 99,
+    maxHeight: 170,
+  },
+  fixedLocationButtonInBox: {
+    position: 'absolute',
+    top: 57, // 자동완성 아래에 나오도록 (필요시 조정)
+    left: 4,
     width: 40,
     height: 40,
     backgroundColor: '#fff',
@@ -262,6 +341,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    zIndex: 20,
+    zIndex: 10, // 자동완성(zIndex:99)보다 낮게!
   },
 });
