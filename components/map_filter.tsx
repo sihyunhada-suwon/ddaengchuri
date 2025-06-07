@@ -1,25 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Store } from '../app/(tabs)/map';
-import Icon from 'react-native-vector-icons/Feather';
-import { SharedValue, withTiming } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
-  stores: Store[];
-  sheetPosition: SharedValue<number>;
-  locationText: string; // ✅ 추가: 현재 위치 주소
+  onlyDiscounted: boolean | null;
+  setOnlyDiscounted: (val: boolean | null) => void;
+  categories: string[];
+  setCategories: (val: string[]) => void;
+  distance: string;
+  setDistance: (val: string) => void;
+  onApply: () => void;
+  onClose: () => void;
 }
 
-const CATEGORIES = [
+const ALL_CATEGORIES = [
   '편의점/마트',
   '프랜차이즈',
   '치킨/피자',
@@ -44,364 +44,234 @@ const CATEGORIES = [
 
 const DISTANCES = ['전체', '1km', '2km', '3km', '5km', '10km', '15km'];
 
-export default function MapBottomSheet({
-  stores,
-  sheetPosition,
-  locationText,
+export default function MapFilter({
+  onlyDiscounted,
+  setOnlyDiscounted,
+  categories,
+  setCategories,
+  distance,
+  setDistance,
+  onApply,
+  onClose,
 }: Props) {
-  const snapPoints = ['10%', '40%', '80%'];
-  const [showFilter, setShowFilter] = useState(true);
-  const [filterMode, setFilterMode] = useState(false);
-  const [onlyDiscounted, setOnlyDiscounted] = useState(true);
-  const [categories, setCategories] = useState(['편의점/마트', '프랜차이즈']);
-  const [distance, setDistance] = useState('1km');
-
   const toggleCategory = (category: string) => {
-    setCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
+    if (categories.includes(category)) {
+      setCategories(categories.filter((c) => c !== category));
+    } else {
+      setCategories([...categories, category]);
+    }
   };
 
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      setShowFilter(index !== 0);
-      if (!sheetPosition) return;
-      sheetPosition.value = withTiming(
-        index === 0 ? 0 : index === 1 ? 150 : 300
-      );
-    },
-    [sheetPosition]
-  );
-
-  const renderItem = ({ item }: { item: Store }) => (
-    <View style={styles.card}>
-      <Image
-        source={{ uri: 'https://via.placeholder.com/120x80.png?text=Store' }}
-        style={styles.thumbnail}
-      />
-      <View style={styles.cardContent}>
-        <Text style={styles.storeName}>{item.name}</Text>
-        <Text style={styles.rating}>
-          ⭐ {item.rating.toFixed(1)} ({Math.floor(Math.random() * 100)}){' '}
-          {item.distance}m
-        </Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>마감 할인중</Text>
-        </View>
-      </View>
-    </View>
-  );
+  const resetFilters = () => {
+    setOnlyDiscounted(null);
+    setCategories([]);
+    setDistance('전체');
+  };
 
   return (
-    <BottomSheet
-      index={0}
-      snapPoints={snapPoints}
-      enablePanDownToClose={false}
-      onChange={handleSheetChanges}
-      handleComponent={null}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 40 }}
+      keyboardShouldPersistTaps="handled"
     >
-      <BottomSheetView style={styles.sheetContent}>
-        <View style={styles.handleBarContainer}>
-          <View style={styles.handleBar} />
-        </View>
+      <View style={styles.header}>
+        <View style={styles.headerSpacer} />
+        <Text style={styles.title}>필터</Text>
+        <TouchableOpacity onPress={onClose}>
+          <Ionicons name="close" size={28} color="#333" />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.divider} />
 
-        {showFilter && !filterMode && (
-          <View style={styles.locationRow}>
-            <View style={styles.locationInfo}>
-              <Icon name="map-pin" size={16} color="#115E4B" />
-              <Text style={styles.locationText} numberOfLines={1}>
-                {locationText}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={styles.filterIconBox}
-              onPress={() => setFilterMode(true)}
-            >
-              <Icon name="sliders" size={22} color="#115E4B" />
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {!filterMode ? (
-          <FlatList
-            data={stores}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
-            showsVerticalScrollIndicator={false}
+      {/* 할인 필터 */}
+      <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.checkboxRow}
+          onPress={() => setOnlyDiscounted(true)}
+        >
+          <Ionicons
+            name={
+              onlyDiscounted === true ? 'checkbox-outline' : 'square-outline'
+            }
+            size={22}
+            color={onlyDiscounted === true ? '#115E4B' : '#ccc'}
+            style={styles.checkboxIcon}
           />
-        ) : (
-          <ScrollView contentContainerStyle={styles.filterContainer}>
-            <View style={styles.header}>
-              <Text style={styles.headerText}>필터</Text>
-              <TouchableOpacity onPress={() => setFilterMode(false)}>
-                <Icon name="x" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
+          <Text style={styles.checkboxLabel}>마감할인 상품만 보기</Text>
+        </TouchableOpacity>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>마감할인</Text>
-              <View style={styles.row}>
-                <TouchableOpacity
-                  style={[styles.checkbox, onlyDiscounted && styles.checkedBox]}
-                  onPress={() => setOnlyDiscounted((prev) => !prev)}
-                >
-                  {onlyDiscounted && (
-                    <Icon name="check" size={16} color="#fff" />
-                  )}
-                </TouchableOpacity>
-                <Text style={styles.optionText}>마감할인 상품만 보기</Text>
-              </View>
-            </View>
+        <TouchableOpacity
+          style={styles.checkboxRow}
+          onPress={() => setOnlyDiscounted(false)}
+        >
+          <Ionicons
+            name={
+              onlyDiscounted === false ? 'checkbox-outline' : 'square-outline'
+            }
+            size={22}
+            color={onlyDiscounted === false ? '#115E4B' : '#ccc'}
+            style={styles.checkboxIcon}
+          />
+          <Text style={styles.checkboxLabel}>판매중인 전체 상품 보기</Text>
+        </TouchableOpacity>
+      </View>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>카테고리</Text>
-              <View style={styles.tagContainer}>
-                {CATEGORIES.map((cat) => (
-                  <TouchableOpacity
-                    key={cat}
-                    onPress={() => toggleCategory(cat)}
-                    style={[
-                      styles.tag,
-                      categories.includes(cat) && styles.activeTag,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.tagText,
-                        categories.includes(cat) && styles.activeTagText,
-                      ]}
-                    >
-                      {cat}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>거리</Text>
-              <View style={styles.tagContainer}>
-                {DISTANCES.map((d) => (
-                  <TouchableOpacity
-                    key={d}
-                    onPress={() => setDistance(d)}
-                    style={[styles.tag, distance === d && styles.activeTag]}
-                  >
-                    <Text
-                      style={[
-                        styles.tagText,
-                        distance === d && styles.activeTagText,
-                      ]}
-                    >
-                      {d}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.footer}>
-              <TouchableOpacity
-                style={styles.resetButton}
-                onPress={() => {
-                  setOnlyDiscounted(true);
-                  setCategories([]);
-                  setDistance('전체');
-                }}
+      {/* 카테고리 */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>카테고리</Text>
+        <View style={styles.buttonGrid}>
+          {ALL_CATEGORIES.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              style={[
+                styles.categoryBtn,
+                categories.includes(cat) && styles.selectedBtn,
+              ]}
+              onPress={() => toggleCategory(cat)}
+            >
+              <Text
+                style={
+                  categories.includes(cat)
+                    ? styles.selectedText
+                    : styles.categoryText
+                }
               >
-                <Text style={styles.resetText}>초기화</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.applyButton}
-                onPress={() => setFilterMode(false)}
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* 거리 */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>거리</Text>
+        <View style={styles.buttonGrid}>
+          {DISTANCES.map((d) => (
+            <TouchableOpacity
+              key={d}
+              style={[styles.categoryBtn, d === distance && styles.selectedBtn]}
+              onPress={() => setDistance(d)}
+            >
+              <Text
+                style={
+                  d === distance ? styles.selectedText : styles.categoryText
+                }
               >
-                <Text style={styles.applyText}>적용하기</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        )}
-      </BottomSheetView>
-    </BottomSheet>
+                {d}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* 하단 버튼 */}
+      <View style={styles.footerButtons}>
+        <TouchableOpacity style={styles.resetBtn} onPress={resetFilters}>
+          <Text style={styles.resetText}>초기화</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.applyBtn} onPress={onApply}>
+          <Text style={styles.applyText}>적용하기</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  sheetContent: { flex: 1 },
-  handleBarContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#ccc',
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  locationInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  locationText: {
-    marginLeft: 6,
-    fontSize: 14,
-    color: '#333',
-    flexShrink: 1,
-    maxWidth: 220,
-  },
-  filterIconBox: {
-    backgroundColor: '#F4F4F4',
-    padding: 8,
-    borderRadius: 20,
+  container: {
+    backgroundColor: '#fff',
+    padding: 20,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  headerText: {
-    fontSize: 18,
+  headerSpacer: {
+    width: 28,
+  },
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
   },
-  filterContainer: {
-    paddingBottom: 40,
-    paddingHorizontal: 20,
+  divider: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginTop: 10,
+    marginBottom: 20,
   },
   section: {
-    marginBottom: 30,
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 10,
   },
-  row: {
+  checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 14,
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginRight: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  checkboxIcon: {
+    marginRight: 8,
+    marginTop: 1,
   },
-  checkedBox: {
-    backgroundColor: '#115E4B',
-    borderColor: '#115E4B',
-  },
-  optionText: {
-    fontSize: 14,
+  checkboxLabel: {
+    fontSize: 15,
     color: '#333',
   },
-  tagContainer: {
+  buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
   },
-  tag: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 14,
+  categoryBtn: {
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    marginBottom: 10,
+    backgroundColor: '#E0E0E0',
+    marginBottom: 8,
   },
-  tagText: {
-    color: '#666',
-    fontSize: 13,
-  },
-  activeTag: {
+  selectedBtn: {
     backgroundColor: '#115E4B',
-    borderColor: '#115E4B',
   },
-  activeTagText: {
+  categoryText: {
+    color: '#333',
+  },
+  selectedText: {
     color: '#fff',
   },
-  footer: {
+  footerButtons: {
     flexDirection: 'row',
-    marginTop: 20,
+    justifyContent: 'space-between',
+    marginTop: 8,
+    paddingBottom: 10,
   },
-  resetButton: {
-    flex: 1,
-    backgroundColor: '#eee',
+  resetBtn: {
     padding: 14,
+    backgroundColor: '#ccc',
     borderRadius: 8,
-    marginRight: 10,
-    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  applyBtn: {
+    padding: 14,
+    backgroundColor: '#115E4B',
+    borderRadius: 8,
+    flex: 1,
   },
   resetText: {
+    textAlign: 'center',
     color: '#333',
-    fontWeight: 'bold',
-  },
-  applyButton: {
-    flex: 2,
-    backgroundColor: '#115E4B',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
+    fontWeight: '500',
   },
   applyText: {
+    textAlign: 'center',
     color: '#fff',
-    fontWeight: 'bold',
-  },
-  badge: {
-    marginTop: 6,
-    backgroundColor: '#115E4B',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  thumbnail: {
-    width: 120,
-    height: 80,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-  },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardContent: {
-    flex: 1,
-    padding: 10,
-    justifyContent: 'center',
-  },
-  storeName: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  rating: {
-    fontSize: 13,
-    color: '#666',
+    fontWeight: '600',
   },
 });
