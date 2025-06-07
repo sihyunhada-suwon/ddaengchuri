@@ -12,6 +12,7 @@ import type { ComponentRef } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BottomSheet from '../../components/map_bottomsheet';
 import { useSharedValue } from 'react-native-reanimated';
+import { GOOGLE_API_KEY } from '../../constants/config';
 
 export type Store = {
   id: number;
@@ -89,6 +90,48 @@ export default function MapScreen() {
     }
   };
 
+  const searchPlace = async () => {
+    // ✅ [1] 검색어 로그
+    console.log('검색어:', search);
+
+    if (!search.trim()) return;
+
+    // ✅ [2] API 키 로그
+    console.log('API 키:', GOOGLE_API_KEY);
+
+    const apiKey = GOOGLE_API_KEY;
+    const encoded = encodeURIComponent(search.trim());
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encoded}&key=${apiKey}`;
+
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+
+      // ✅ [3] API 응답 로그
+      console.log('API 응답:', json);
+
+      if (json.results && json.results.length > 0) {
+        const { lat, lng } = json.results[0].geometry.location;
+
+        const newRegion: Region = {
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+
+        setRegion(newRegion);
+        mapRef.current?.animateToRegion(newRegion, 500);
+        setLocationText(json.results[0].formatted_address);
+      } else {
+        alert('검색 결과를 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('Geocoding API 오류:', error);
+      alert('장소 검색 중 오류가 발생했습니다.');
+    }
+  };
+
   useEffect(() => {
     goToCurrentLocation();
   }, []);
@@ -133,7 +176,7 @@ export default function MapScreen() {
             placeholderTextColor="#999"
           />
         </View>
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} onPress={searchPlace}>
           <Icon name="arrow-right" color="#fff" size={20} />
         </TouchableOpacity>
       </View>
