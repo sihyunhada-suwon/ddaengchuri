@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Store } from '../app/(tabs)/map';
-import Icon from 'react-native-vector-icons/Feather';
+import { Ionicons } from '@expo/vector-icons';
 import { SharedValue, withTiming } from 'react-native-reanimated';
 import MapFilter from './map_filter';
 
@@ -92,7 +92,12 @@ export default function MapBottomSheet({
           <View style={styles.locationRow}>
             <View style={styles.locationTextBlock}>
               <View style={styles.locationMainRow}>
-                <Icon name="map-pin" size={16} color="#115E4B" />
+                <Ionicons
+                  name="location-sharp"
+                  size={20}
+                  color="#115E4B"
+                  style={{ marginRight: 6 }}
+                />
                 <Text style={styles.locationMainText}>{locationText}</Text>
                 <View style={styles.underline} />
               </View>
@@ -100,11 +105,12 @@ export default function MapBottomSheet({
                 주변에서 마감 할인 상품을 찾아보세요 !
               </Text>
             </View>
+
             <TouchableOpacity
               style={styles.filterIconBox}
               onPress={() => setFilterMode(true)}
             >
-              <Icon name="sliders" size={22} color="#115E4B" />
+              <Ionicons name="options-outline" size={22} color="#115E4B" />
             </TouchableOpacity>
           </View>
         )}
@@ -162,13 +168,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationMainText: {
-    marginLeft: 6,
     fontSize: 17,
     fontWeight: 'bold',
     color: '#333',
   },
   underline: {
-    flex: 0.5,
+    flex: 0.8,
     height: 2,
     backgroundColor: '#115E4B',
     marginLeft: 6,
@@ -182,13 +187,20 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 15,
     color: '#aaa',
-    marginLeft: 22,
+    marginLeft: 26,
   },
   filterIconBox: {
-    backgroundColor: '#F4F4F4',
-    padding: 8,
-    borderRadius: 20,
-    marginTop: -10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    height: 36,
+    minWidth: 52,
+    borderRadius: 18, // ← height: 36의 절반보다 살짝 작은 값으로!
+    borderWidth: 1.3,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: -5,
   },
   badge: {
     marginTop: 6,

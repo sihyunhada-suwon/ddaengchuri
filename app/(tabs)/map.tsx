@@ -118,14 +118,21 @@ export default function MapScreen() {
       </MapView>
 
       <View style={styles.searchBox}>
-        <Icon name="magnify" size={22} color="#666" style={styles.searchIcon} />
-        <TextInput
-          placeholder="수원대학교"
-          value={search}
-          onChangeText={setSearch}
-          style={styles.searchInput}
-          placeholderTextColor="#999"
-        />
+        <View style={styles.searchInputWrapper}>
+          <Icon
+            name="magnify"
+            size={22}
+            color="#999"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            placeholder="장소를 입력하세요!"
+            value={search}
+            onChangeText={setSearch}
+            style={styles.searchInput}
+            placeholderTextColor="#999"
+          />
+        </View>
         <TouchableOpacity style={styles.searchButton}>
           <Icon name="arrow-right" color="#fff" size={20} />
         </TouchableOpacity>
@@ -159,32 +166,43 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   searchBox: {
     position: 'absolute',
-    top: 50,
+    top: 57,
     left: 16,
     right: 16,
-    backgroundColor: '#fff',
-    borderRadius: 30,
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 20,
+  },
+  searchInputWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 11,
+    alignItems: 'center',
     paddingLeft: 14,
-    paddingRight: 6,
+    paddingRight: 10,
     height: 48,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
     elevation: 6,
-    zIndex: 20,
   },
   searchIcon: { marginRight: 6 },
-  searchInput: { flex: 1, fontSize: 15, paddingVertical: 0 },
+  searchInput: { flex: 1, fontSize: 15, paddingVertical: 0, color: '#333' },
   searchButton: {
+    marginLeft: 8,
     backgroundColor: '#115E4B',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
   },
   fixedLocationButton: {
     position: 'absolute',
