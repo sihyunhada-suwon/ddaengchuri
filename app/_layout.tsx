@@ -1,4 +1,4 @@
-import 'react-native-reanimated'; // 항상 최상단에 있어야 함
+import 'react-native-reanimated';
 
 import {
   DarkTheme,

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import MembershipScreen from '../../components/MembershipScreen'; // MembershipScreen import
+import MembershipScreen from '../../components/MembershipScreen';
 
 export default function MyPage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
