@@ -1,41 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   ScrollView,
   Platform,
   StatusBar,
+  Image,
 } from 'react-native';
-import { MaterialIcons, Entypo } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import MembershipScreen from '../../components/MembershipScreen'; // MembershipScreen import
 
 export default function MyPage() {
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [showMembership, setShowMembership] = useState(false);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setProfileImage(result.assets[0].uri);
+    }
+  };
+
+  // Membership 화면을 상태로 렌더링
+  if (showMembership) {
+    return <MembershipScreen onGoBack={() => setShowMembership(false)} />;
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {/* 초록 배경 영역 */}
       <View style={styles.greenHeader}>
         <View style={styles.profileRowCentered}>
           <View style={styles.profileRowInner}>
-            <View style={styles.profileImageWrapper}>
-              <Image
-                source={require('../../assets/leaf.png')}
-                style={styles.profileImage}
-              />
-            </View>
+            <TouchableOpacity
+              style={styles.profileImageWrapper}
+              onPress={pickImage}
+            >
+              {profileImage ? (
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <Text style={styles.profileEmoji}>🌱</Text>
+              )}
+            </TouchableOpacity>
             <Text style={styles.profileTextLeftAligned}>
-              환경을 위한 한걸음,{'\n'}지금 로그인하고 시작해보세요 !
+              환경을 위한 한걸음,{'\n'}
+              지금 로그인하고 시작해보세요! ❯{' '}
             </Text>
           </View>
         </View>
 
-        {/* 등급, 적립금, 쿠폰 */}
+        {/* infoBox: 등급 버튼에 onPress로 상태 교체 */}
         <View style={styles.infoBox}>
-          <View style={styles.infoItem}>
+          <TouchableOpacity
+            style={styles.infoItem}
+            onPress={() => setShowMembership(true)}
+          >
             <Text style={styles.infoLabel}>등급</Text>
-            <Text style={styles.infoValue}>---</Text>
-          </View>
+            <Text style={styles.infoValue}>- - -</Text>
+          </TouchableOpacity>
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>적립금</Text>
             <Text style={styles.infoValue}>0원</Text>
@@ -47,7 +79,6 @@ export default function MyPage() {
         </View>
       </View>
 
-      {/* CO2 배출감소 카드 */}
       <View style={styles.statBoxShadowWrapper}>
         <View style={styles.statBox}>
           <View style={styles.statItem}>
@@ -56,118 +87,132 @@ export default function MyPage() {
           </View>
           <View style={styles.divider} />
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>줄인 음식물 쓰레기🧾</Text>
+            <Text style={styles.statLabel}>줄인 음식물 쓰레기📉</Text>
             <Text style={styles.statValue}>약 0.0g</Text>
           </View>
         </View>
       </View>
 
-      {/* 리워드 배너 */}
       <View style={styles.bannerBox}>
-        <Text style={styles.bannerTitle}>
-          지구도 지키고, 포인트도 챙기세요!
-        </Text>
-        <Text style={styles.bannerSub}>
-          지금 구매하면 환경보호 + 리워드까지 !🥕
-        </Text>
+        <View style={styles.bannerTextWrapper}>
+          <Text style={styles.bannerTitle}>
+            지구도 지키고, 포인트도 챙기세요!
+          </Text>
+          <View style={styles.bannerSubRow}>
+            <Text style={styles.bannerSub}>
+              지금 구매하면 환경보호 + 리워드까지!
+            </Text>
+            <Image
+              source={require('../../assets/mypage/reward.png')}
+              style={styles.rewardIcon}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+        <Image
+          source={require('../../assets/mypage/saveearth.png')}
+          style={styles.bannerImage}
+          resizeMode="contain"
+        />
       </View>
 
-      {/* 메뉴 */}
       <View style={styles.menuBox}>
         <TouchableOpacity style={styles.menuItem}>
-          <Entypo name="heart-outlined" size={22} color="#333" />
+          <Image
+            source={require('../../assets/mypage/heart.png')}
+            style={styles.menuIcon}
+          />
           <Text style={styles.menuText}>즐겨찾기</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <MaterialIcons name="rate-review" size={22} color="#333" />
+          <Image
+            source={require('../../assets/mypage/review.png')}
+            style={styles.menuIcon}
+          />
           <Text style={styles.menuText}>리뷰 관리</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <Entypo name="location-pin" size={22} color="#333" />
+          <Image
+            source={require('../../assets/mypage/location.png')}
+            style={styles.menuIcon}
+          />
           <Text style={styles.menuText}>주소 관리</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 고객지원 */}
+      <View style={styles.separator} />
+
       <View style={styles.sectionTitleBox}>
         <Text style={styles.sectionTitle}>고객지원</Text>
       </View>
       <View style={styles.supportBox}>
-        <Text style={styles.supportText}>ㆍ공지사항</Text>
-        <Text style={styles.supportText}>ㆍ고객센터</Text>
-        <Text style={styles.supportText}>ㆍ개인정보약관</Text>
+        <View style={styles.bulletRow}>
+          <View style={styles.bullet} />
+          <Text style={styles.supportText}>공지사항</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <View style={styles.bullet} />
+          <Text style={styles.supportText}>고객센터</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <View style={styles.bullet} />
+          <Text style={styles.supportText}>개인정보약관</Text>
+        </View>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
   greenHeader: {
     backgroundColor: '#2d5d38',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight! + 30 : 90,
-    paddingBottom: 30,
+    paddingBottom: 25,
     paddingHorizontal: 20,
   },
   profileRowCentered: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 25,
   },
-  profileRowInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  profileRowInner: { flexDirection: 'row', alignItems: 'center' },
   profileImageWrapper: {
-    width: 90,
-    height: 90,
+    width: 85,
+    height: 85,
     borderRadius: 50,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f4f0',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 25,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
   },
-  profileImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 50,
-  },
+  profileImage: { width: 80, height: 80, borderRadius: 30 },
+  profileEmoji: { fontSize: 40 },
   profileTextLeftAligned: {
-    marginLeft: 20,
     color: '#fff',
-    fontSize: 19,
-    lineHeight: 26,
+    fontSize: 17,
+    lineHeight: 23,
     fontWeight: '600',
     textAlign: 'left',
+    flexShrink: 1,
   },
   infoBox: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 12,
+    paddingVertical: 18,
+    marginBottom: 25,
   },
-  infoItem: {
-    alignItems: 'center',
-  },
-  infoLabel: {
-    fontSize: 15,
-    color: '#eee',
-  },
-  infoValue: {
-    marginTop: 5,
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
+  infoItem: { alignItems: 'center' },
+  infoLabel: { marginTop: -10, fontSize: 17, color: '#fff', fontWeight: '600' },
+  infoValue: { marginTop: 15, fontSize: 15, fontWeight: '500', color: '#fff' },
   statBoxShadowWrapper: {
     marginHorizontal: 20,
-    marginTop: -20,
+    marginTop: -40,
     zIndex: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
@@ -175,82 +220,106 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f4f0',
   },
   statBox: {
     flexDirection: 'row',
-    backgroundColor: '#f2f2f2',
-    borderRadius: 12,
+    backgroundColor: '#f5f4f0',
+    borderRadius: 10,
     overflow: 'hidden',
   },
-  statItem: {
-    flex: 1,
-    padding: 18,
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: 15,
-    color: '#555',
-  },
+  statItem: { flex: 1, padding: 18, alignItems: 'center' },
+  statLabel: { fontSize: 13, color: '#444444', fontWeight: 'bold' },
   statValue: {
     marginTop: 5,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 15,
+    color: '#444444',
   },
   divider: {
-    width: 1,
+    width: 0.7,
     backgroundColor: '#ccc',
+    height: '70%',
+    alignSelf: 'center',
   },
   bannerBox: {
+    flexDirection: 'row',
     backgroundColor: '#fff8cc',
-    margin: 20,
-    padding: 18,
+    width: 360,
+    height: 75,
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    marginHorizontal: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
+  bannerTextWrapper: { flex: 1, marginRight: 12 },
   bannerTitle: {
-    fontWeight: 'bold',
-    fontSize: 17,
-  },
-  bannerSub: {
-    marginTop: 5,
+    fontWeight: '600',
     fontSize: 15,
-    color: '#555',
+    color: '#444',
+    marginLeft: 17,
   },
-  menuBox: {
-    paddingHorizontal: 20,
-    marginTop: -10,
+  bannerSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 19,
   },
+  bannerSub: { fontSize: 12, color: '#666', marginRight: 6 },
+  rewardIcon: { width: 14, height: 14, marginLeft: -5 },
+  bannerImage: { width: 65, height: 65, marginRight: 20 },
+  menuBox: { paddingHorizontal: 20, marginTop: -10 },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    paddingVertical: 10,
   },
-  menuText: {
-    marginLeft: 12,
-    fontSize: 18,
-    color: '#222',
-    fontWeight: '500',
+  menuIcon: { width: 27, height: 27, resizeMode: 'contain' },
+  menuText: { marginLeft: 12, fontSize: 17, color: '#444', fontWeight: '500' },
+  separator: {
+    height: 1,
+    backgroundColor: '#f2f2f2',
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 16,
   },
   sectionTitleBox: {
     paddingHorizontal: 20,
-    marginTop: 30,
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 10,
+    marginLeft: -3,
   },
   sectionTitle: {
     fontWeight: 'bold',
     fontSize: 17,
-    color: '#222',
+    color: '#444',
+    marginLeft: 8,
+    marginBottom: 10,
   },
-  supportBox: {
-    paddingHorizontal: 20,
-    paddingBottom: 50,
-    gap: 10,
+  supportBox: { paddingHorizontal: 20, paddingBottom: 50, gap: 10 },
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  bullet: {
+    width: 5,
+    height: 12,
+    backgroundColor: '#cccccc',
+    marginRight: 15,
+    marginLeft: 10,
+    borderRadius: 5,
   },
   supportText: {
     fontSize: 17,
-    paddingVertical: 6,
-    color: '#555',
+    fontWeight: '500',
+    paddingVertical: 5,
+    color: '#444',
   },
 });
