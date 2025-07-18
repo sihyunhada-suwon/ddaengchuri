@@ -15,7 +15,7 @@ interface Props {
   setCategories: (val: string[]) => void;
   distance: string;
   setDistance: (val: string) => void;
-  onApply: () => void;
+  onApply: () => void; // map.tsx에서 필터 적용 함수
   onClose: () => void;
 }
 
@@ -66,6 +66,11 @@ export default function MapFilter({
     setOnlyDiscounted(null);
     setCategories([]);
     setDistance('전체');
+  };
+
+  const applyFiltersAndClose = () => {
+    onApply(); // map.tsx에서 필터 적용 로직 실행
+    onClose(); // 필터 UI 닫기
   };
 
   return (
@@ -170,7 +175,10 @@ export default function MapFilter({
         <TouchableOpacity style={styles.resetBtn} onPress={resetFilters}>
           <Text style={styles.resetText}>초기화</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.applyBtn} onPress={onApply}>
+        <TouchableOpacity
+          style={styles.applyBtn}
+          onPress={applyFiltersAndClose}
+        >
           <Text style={styles.applyText}>적용하기</Text>
         </TouchableOpacity>
       </View>

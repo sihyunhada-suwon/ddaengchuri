@@ -25,6 +25,7 @@ interface Props {
   setCategories: (val: string[]) => void;
   distance: string;
   setDistance: (val: string) => void;
+  onApplyFilter: () => void; // map.tsx에서 넘겨받은 필터 적용 함수
 }
 
 export default function MapBottomSheet({
@@ -39,6 +40,7 @@ export default function MapBottomSheet({
   setCategories,
   distance,
   setDistance,
+  onApplyFilter,
 }: Props) {
   const snapPoints = ['10%', '40%', '80%'];
 
@@ -52,28 +54,36 @@ export default function MapBottomSheet({
     [sheetPosition]
   );
 
-  const renderItem = ({ item }: { item: Store }) => (
-    <View style={styles.cardWrapper}>
-      <View style={styles.cardVertical}>
-        <Image
-          source={item.image}
-          style={styles.cardImage}
-          resizeMode="cover"
-        />
-        <View style={styles.cardContentVertical}>
-          <Text style={styles.storeName}>{item.name}</Text>
-          <Text style={styles.rating}>
-            ⭐ {item.rating.toFixed(1)} · {item.distance}m
-          </Text>
-          {item.isDiscounted && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>마감 할인중</Text>
-            </View>
-          )}
+  const renderItem = ({ item }: { item: Store }) => {
+    const imageSource = item.image
+      ? { uri: item.image }
+      : require('../assets/default_food.png'); // fallback 이미지
+
+    return (
+      <View style={styles.cardWrapper}>
+        <View style={styles.cardVertical}>
+          <Image
+            source={imageSource}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.cardContentVertical}>
+            <Text style={styles.storeName}>{item.name}</Text>
+            <Text style={styles.rating}>
+              ⭐ {item.rating.toFixed(1)} · {item.totalReviews ?? 0}명 리뷰 ·{' '}
+              {item.distance}m
+            </Text>
+            {item.address && <Text style={styles.address}>{item.address}</Text>}
+            {item.isDiscounted && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>마감 할인중</Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <BottomSheet
@@ -123,7 +133,10 @@ export default function MapBottomSheet({
             setCategories={setCategories}
             distance={distance}
             setDistance={setDistance}
-            onApply={() => setFilterMode(false)}
+            onApply={() => {
+              onApplyFilter(); // map.tsx의 applyFilters 호출
+              setFilterMode(false);
+            }}
             onClose={() => setFilterMode(false)}
           />
         ) : (
@@ -194,7 +207,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 36,
     minWidth: 52,
-    borderRadius: 18, // ← height: 36의 절반보다 살짝 작은 값으로!
+    borderRadius: 18,
     borderWidth: 1.3,
     borderColor: '#ccc',
     justifyContent: 'center',
@@ -243,5 +256,10 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 13,
     color: '#666',
+  },
+  address: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
 });
