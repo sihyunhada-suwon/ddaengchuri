@@ -1482,9 +1482,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gorhom/bottom-sheet@npm:4.5.1":
-  version: 4.5.1
-  resolution: "@gorhom/bottom-sheet@npm:4.5.1"
+"@gorhom/bottom-sheet@npm:^5.1.6":
+  version: 5.1.6
+  resolution: "@gorhom/bottom-sheet@npm:5.1.6"
   dependencies:
     "@gorhom/portal": "npm:1.0.14"
     invariant: "npm:^2.2.4"
@@ -1493,14 +1493,14 @@ __metadata:
     "@types/react-native": "*"
     react: "*"
     react-native: "*"
-    react-native-gesture-handler: ">=1.10.1"
-    react-native-reanimated: ">=2.2.0"
+    react-native-gesture-handler: ">=2.16.1"
+    react-native-reanimated: ">=3.16.0"
   peerDependenciesMeta:
     "@types/react":
       optional: true
     "@types/react-native":
       optional: true
-  checksum: 10c0/0710680977bd0df1537d15222208eb32c85eabfe5f0ce00052b4b87ffa5d39afbb154204a417b543450101554a7abeb3d8fa3f5df050e83580cc38faf1ec7361
+  checksum: 10c0/2f5c7e4e0a8968a567f5dcac5553b85e09850be46755bcf10a6e44843705392dd71c701b551575d8ea7c6cda8678f4a04851e926b6bfa63e82198b88568a76d8
   languageName: node
   linkType: hard
 
@@ -7975,7 +7975,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.26.0"
     "@expo/vector-icons": "npm:^14.0.0"
-    "@gorhom/bottom-sheet": "npm:4.5.1"
+    "@gorhom/bottom-sheet": "npm:^5.1.6"
     "@react-navigation/native": "npm:^7.1.9"
     "@react-navigation/native-stack": "npm:^7.3.13"
     "@types/jest": "npm:^29.5.12"
