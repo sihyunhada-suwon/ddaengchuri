@@ -2251,7 +2251,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/native-stack@npm:^7.3.10, @react-navigation/native-stack@npm:^7.3.13":
+"@react-navigation/elements@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@react-navigation/elements@npm:2.6.1"
+  dependencies:
+    color: "npm:^4.2.3"
+    use-latest-callback: "npm:^0.2.4"
+    use-sync-external-store: "npm:^1.5.0"
+  peerDependencies:
+    "@react-native-masked-view/masked-view": ">= 0.2.0"
+    "@react-navigation/native": ^7.1.16
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-safe-area-context: ">= 4.0.0"
+  peerDependenciesMeta:
+    "@react-native-masked-view/masked-view":
+      optional: true
+  checksum: 10c0/ab6f95f5b30b190a793d2dc8683a1a395a1cb0cbea0d873b371277ea3331bbae5dee05b26e0c479490ee6394d21fcd024a000c9c041c00521e1b94a042c4e4bb
+  languageName: node
+  linkType: hard
+
+"@react-navigation/native-stack@npm:^7.3.10":
   version: 7.3.14
   resolution: "@react-navigation/native-stack@npm:7.3.14"
   dependencies:
@@ -2264,6 +2284,22 @@ __metadata:
     react-native-safe-area-context: ">= 4.0.0"
     react-native-screens: ">= 4.0.0"
   checksum: 10c0/46fd08320e9aeffa95c373671380bb086075b54fb17d370ad468f5f439a5959972ecb549b3226c6af572a5749ef14a59cb8bbb6bb535ffb865d0a524cebd9c67
+  languageName: node
+  linkType: hard
+
+"@react-navigation/native-stack@npm:^7.3.23":
+  version: 7.3.23
+  resolution: "@react-navigation/native-stack@npm:7.3.23"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.6.1"
+    warn-once: "npm:^0.1.1"
+  peerDependencies:
+    "@react-navigation/native": ^7.1.16
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-safe-area-context: ">= 4.0.0"
+    react-native-screens: ">= 4.0.0"
+  checksum: 10c0/0639f6d10fb5900a95b4d8d20a30fc27f763ff0c276a7ffeb5f372f978ec6772180bafff82184716000e3e999eea4e724fbeba77a3dcde3ad866f00ec54bf11e
   languageName: node
   linkType: hard
 
@@ -7977,7 +8013,7 @@ __metadata:
     "@expo/vector-icons": "npm:^14.0.0"
     "@gorhom/bottom-sheet": "npm:^5.1.6"
     "@react-navigation/native": "npm:^7.1.9"
-    "@react-navigation/native-stack": "npm:^7.3.13"
+    "@react-navigation/native-stack": "npm:^7.3.23"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^22.15.30"
     "@types/react": "npm:~19.0.10"
@@ -8770,6 +8806,15 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/dc87503f6279ce2980f78e1019231ba20d7509e9d17adac05285babe4d6ba6f68c52f4ef7b5ad777cbc2af9fbaaa09d7adb664ca556da0aebab9f020022880be
+  languageName: node
+  linkType: hard
+
+"use-latest-callback@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "use-latest-callback@npm:0.2.4"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 10c0/dcdcb4849225638100f662c82ae44eaa7c635ea3a2419f521b45e7f36ede28a49b77f324fa008dccb840acd41a377c0ca8ab36cf4903ee746e96c41c86a9eeb5
   languageName: node
   linkType: hard
 
