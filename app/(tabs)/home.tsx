@@ -363,7 +363,7 @@ export default function Home() {
             style={styles.locationWrapper}
           >
             <Ionicons name="location-sharp" size={18} color="#555" />
-            <Text style={styles.location}>수원대학교 IT 대학</Text>
+            <Text style={styles.location}>현재 위치를 설정해주세요.</Text>
             <Ionicons
               name="chevron-down"
               size={16}
@@ -414,8 +414,7 @@ export default function Home() {
               />
             </View>
             <Text style={styles.cardTitleSmall}>
-              샐러리아 봉담점{' '}
-              <Text style={styles.cardInfo}>⭐ 4.9 (10){'\n'}4km</Text>
+              샐러리아 <Text style={styles.cardInfo}>⭐ 4.9 (10){'\n'}4km</Text>
             </Text>
           </View>
 
@@ -433,7 +432,7 @@ export default function Home() {
           </View>
         </ScrollView>
 
-        <Text style={styles.subTitle}>‘수원대학교’ 근처 인기 맛집✨</Text>
+        <Text style={styles.subTitle}>근처 인기 맛집✨</Text>
 
         <ScrollView
           horizontal
