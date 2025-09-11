@@ -234,8 +234,14 @@ export default function SideMenu({ slideAnim, onClose }: SideMenuProps) {
         <Text style={styles.menuText}>리뷰 관리</Text>
       </TouchableOpacity>
 
-      {/* 주소 관리 (미연결) */}
-      <TouchableOpacity style={styles.menuItem}>
+      {/* ✅ 주소 관리 */}
+      <TouchableOpacity
+        style={styles.menuItem}
+        onPress={() => {
+          router.push('/address'); // app/address.tsx 또는 app/address/index.tsx
+          onClose?.();
+        }}
+      >
         <Ionicons
           name="location-outline"
           size={20}
