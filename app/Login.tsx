@@ -1,5 +1,3 @@
-// Login.tsx
-
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
