@@ -3,7 +3,7 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      'react-native-reanimated/plugin', // 항상 마지막!
+      'react-native-worklets/plugin', // 항상 마지막!
     ],
   };
 };
