@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   StatusBar,
-  SafeAreaView,
   Platform,
   Animated,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import SideMenu from '../../components/sidemenu';
 import { router } from 'expo-router'; // ✅ 추가

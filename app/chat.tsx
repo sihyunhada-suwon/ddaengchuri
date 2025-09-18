@@ -7,12 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import IntroPopup from '../components/Introchatpopup';
