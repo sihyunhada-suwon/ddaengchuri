@@ -11,7 +11,7 @@ import {
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import type { ComponentRef } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import BottomSheet from '../../components/map_bottomsheet';
+import MapBottomSheet from '../../components/map_bottomsheet';
 import { useSharedValue } from 'react-native-reanimated';
 import { GOOGLE_API_KEY } from '../../constants/config';
 import { getDistance } from 'geolib';
@@ -347,7 +347,7 @@ export default function MapScreen() {
         </TouchableOpacity>
       </View>
 
-      <BottomSheet
+      <MapBottomSheet
         stores={stores}
         sheetPosition={sheetPosition}
         locationText={locationText}
