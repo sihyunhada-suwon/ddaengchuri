@@ -7,7 +7,7 @@
 //   StyleSheet,
 //   ScrollView,
 // } from 'react-native';
-// import { useRouter } from 'expo-router';
+// import { Stack, useRouter } from 'expo-router';
 // import Checkbox from 'expo-checkbox';
 
 // export default function OrderScreen() {
@@ -25,6 +25,15 @@
 
 //   return (
 //     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+//       {/* ✅ 기본 expo-router 헤더 제거 */}
+//       <Stack.Screen
+//         options={{
+//           headerShown: false,
+//           title: '',
+//           headerBackVisible: false,
+//         }}
+//       />
+
 //       <ScrollView style={styles.container}>
 //         {/* Header */}
 //         <View style={styles.header}>
@@ -252,23 +261,32 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Checkbox from 'expo-checkbox';
+import { useCartStore } from '@/stores/cartStore';
 
 export default function OrderScreen() {
   const router = useRouter();
+  const { items, totalPrice, clearCart } = useCartStore(); // ✅ Zustand 데이터 가져오기
+
   const [noDisposable, setNoDisposable] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState<
     'simple' | 'card' | 'phone'
   >('card');
-  const [usePoints, setUsePoints] = useState(200);
+  const [usePoints, setUsePoints] = useState(0);
 
-  const totalPrice = 12500;
-  const discount = 2700;
-  const finalPrice = totalPrice - discount - usePoints;
-  const savedPoints = Math.floor(finalPrice * 0.022); // 2.2% 적립 예시
+  // ✅ 실제 장바구니 합계로 계산
+  const discount = Math.floor(totalPrice * 0.22); // 22% 마감할인 예시
+  const finalPrice = Math.max(totalPrice - discount - usePoints, 0);
+  const savedPoints = Math.floor(finalPrice * 0.022); // 2.2% 적립
+
+  // ✅ 주문 완료 시 (예시)
+  const handleOrder = () => {
+    alert('주문이 완료되었습니다!');
+    clearCart();
+    router.replace('/store');
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* ✅ 기본 expo-router 헤더 제거 */}
       <Stack.Screen
         options={{
           headerShown: false,
@@ -394,16 +412,19 @@ export default function OrderScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* 하단 결제 버튼 */}
+      {/* ✅ 하단 결제 버튼 */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          {finalPrice.toLocaleString()}원 결제하기
-        </Text>
+        <TouchableOpacity onPress={handleOrder}>
+          <Text style={styles.footerText}>
+            {finalPrice.toLocaleString()}원 결제하기
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+/* -------------------- styles -------------------- */
 const styles = StyleSheet.create({
   container: { paddingHorizontal: 20 },
   header: {

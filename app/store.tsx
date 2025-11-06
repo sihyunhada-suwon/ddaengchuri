@@ -308,9 +308,19 @@
 //           <Text style={styles.orderText}>
 //             {cartCount}개 · {Number(cartTotal).toLocaleString()}원
 //           </Text>
+
+//           {/* ✅ 주문하기 버튼 클릭 시 cart.tsx로 이동 */}
 //           <TouchableOpacity
 //             style={styles.orderButton}
-//             onPress={() => alert('주문 페이지로 이동')}
+//             onPress={() =>
+//               router.push({
+//                 pathname: '/cart',
+//                 params: {
+//                   cartTotal: cartTotal.toString(),
+//                   cartCount: cartCount.toString(),
+//                 },
+//               })
+//             }
 //           >
 //             <Text style={styles.orderButtonText}>주문하기</Text>
 //           </TouchableOpacity>
@@ -505,7 +515,8 @@ import {
   StatusBar,
   ScrollView,
 } from 'react-native';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router'; // ✅ 쿼리 파라미터 추가용 import
+import { Stack, useRouter } from 'expo-router';
+import { useCartStore } from '@/stores/cartStore'; // ✅ Zustand 전역 상태 import
 
 type Menu = {
   id: string;
@@ -530,7 +541,8 @@ const KRW = (n: number) => n.toLocaleString('ko-KR') + '원';
 
 export default function StorePage() {
   const router = useRouter();
-  const { cartTotal, cartCount } = useLocalSearchParams(); // ✅ 상품 상세에서 전달받음
+  const { items, totalPrice } = useCartStore(); // ✅ Zustand 상태에서 데이터 가져오기
+  const cartCount = items.reduce((sum, i) => sum + i.count, 0);
 
   const [liked, setLiked] = useState(false);
   const [activeTab, setActiveTab] = useState('전체');
@@ -798,25 +810,15 @@ export default function StorePage() {
         )}
       />
 
-      {/* ✅ 하단 주문 요약바 */}
-      {cartTotal && cartCount && (
+      {/* ✅ 하단 주문 요약바 - Zustand 데이터 표시 */}
+      {cartCount > 0 && (
         <View style={styles.orderBar}>
           <Text style={styles.orderText}>
-            {cartCount}개 · {Number(cartTotal).toLocaleString()}원
+            {cartCount}개 · {totalPrice.toLocaleString()}원
           </Text>
-
-          {/* ✅ 주문하기 버튼 클릭 시 cart.tsx로 이동 */}
           <TouchableOpacity
             style={styles.orderButton}
-            onPress={() =>
-              router.push({
-                pathname: '/cart',
-                params: {
-                  cartTotal: cartTotal.toString(),
-                  cartCount: cartCount.toString(),
-                },
-              })
-            }
+            onPress={() => router.push('/cart')}
           >
             <Text style={styles.orderButtonText}>주문하기</Text>
           </TouchableOpacity>
@@ -970,7 +972,6 @@ const styles = StyleSheet.create({
     width: 30,
     marginTop: 4,
   },
-
   /** ✅ 하단 주문바 스타일 */
   orderBar: {
     position: 'absolute',
