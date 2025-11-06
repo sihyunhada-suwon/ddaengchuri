@@ -2365,6 +2365,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/datetimepicker@npm:8.4.4":
+  version: 8.4.4
+  resolution: "@react-native-community/datetimepicker@npm:8.4.4"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: ">=52.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: 10c0/05794d2746584be85bd74f86593951714407da2bebf49e63e676d58d40a5c85923ae87342a930fde59b60bd5f18e6c878fe747a92f67271d339ed4b1fde6479e
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.81.4":
   version: 0.81.4
   resolution: "@react-native/assets-registry@npm:0.81.4"
@@ -4530,6 +4549,20 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/7a66523e26e9868ad7961c9d6436f188e2832a7b3168a47be10ae8468616250803d31ded11b61bcc920e2aa0f0443c69fcb220be16b0b120aa255a840a355032
+  languageName: node
+  linkType: hard
+
+"expo-checkbox@npm:~5.0.7":
+  version: 5.0.7
+  resolution: "expo-checkbox@npm:5.0.7"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  peerDependenciesMeta:
+    react-native-web:
+      optional: true
+  checksum: 10c0/e62c5eaa39c7d40aa2341c4d7716ee373b1cd09206af1988440fd0ab631b7682e6ea442cfbe080a981912adfd572dc070a5c118d2f4c5e6bb6ef1fe785a8b542
   languageName: node
   linkType: hard
 
@@ -8655,6 +8688,7 @@ __metadata:
     "@expo/metro-runtime": "npm:~6.1.2"
     "@expo/vector-icons": "npm:^15.0.2"
     "@gorhom/bottom-sheet": "npm:^5.2.6"
+    "@react-native-community/datetimepicker": "npm:8.4.4"
     "@react-navigation/native": "npm:^7.1.6"
     "@react-navigation/native-stack": "npm:^7.3.10"
     "@types/jest": "npm:^29.5.12"
@@ -8665,6 +8699,7 @@ __metadata:
     "@types/react-native-vector-icons": "npm:^6.4.18"
     "@types/react-test-renderer": "npm:^18.0.7"
     expo: "npm:~54.0.10"
+    expo-checkbox: "npm:~5.0.7"
     expo-constants: "npm:~18.0.9"
     expo-font: "npm:~14.0.8"
     expo-image-picker: "npm:~16.1.4"

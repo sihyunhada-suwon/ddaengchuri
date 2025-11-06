@@ -139,7 +139,7 @@ export default function StorePage() {
           activeOpacity={0.8}
         >
           <Image
-            source={require('@/assets/heart.png')}
+            source={require('@/assets/mypage/heart.png')}
             style={{ width: 23, height: 23, tintColor: '#fff' }}
             resizeMode="contain"
           />
