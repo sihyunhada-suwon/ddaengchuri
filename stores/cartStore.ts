@@ -13,7 +13,7 @@ export type CartItem = {
 
 type CartStore = {
   items: CartItem[];
-  totalPrice: number; // ✅ 상태로 유지
+  totalPrice: number;
   addItem: (item: CartItem) => void;
   clearCart: () => void;
   removeItem: (id: string) => void;
